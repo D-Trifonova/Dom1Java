@@ -76,20 +76,15 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public Game makeTry(String id, String word) {
 		// TODO Auto-generated method stub: Implement here!
-		// Проверка дали думата е в списъка с валидни 5-буквени думи
 		if (!wordRepo.exists(word)) {
 			throw new UnknownWordException("Word is not valid." + word);
 		}
 
-		// Намиране на играта с подаденото id
 		var game = getGame(id);
 
-		// Създаване на нов опит и добавяне му в играта
 		var guess = new Guess();
 		guess.setWord(word);
 		guess.setMadeAt(LocalDateTime.now());
-
-		// Проверяваме думата на опита и думата на играта за съвпадения
 		var matches = new char[game.getWord().length()];
 
 		for (int i = 0; i < word.length(); i++) {
@@ -112,11 +107,10 @@ public class GameServiceImpl implements GameService {
 
 		game.getGuesses().add(guess);
 
-		// Ако играта е приключила, я маркираме като такава
 		if (guess.getMatches().equals(String.valueOf(Guess.PLACE_MATCH).repeat(matches.length))) {
 			game.setStartedOn(LocalDateTime.now());
 		}
-		// Актуализиране на играта в хранилището
+		
 		gameRepo.save(game);
 
 		return game;
